@@ -31,6 +31,9 @@ class MainWindow(QMainWindow):
         # Strukturbaum-Dock-Widget hinzufügen
         self.strukturbaum = self._erstelle_strukturbaum()
         self.addDockWidget(Qt.LeftDockWidgetArea, self.strukturbaum)
+
+        # Hintergrundfarbe-Status (True = Weiß, False = Dunkelgrau)
+        self.is_background_light = True
     
     #Erstellen der Menüs
     def _create_menus(self):
@@ -45,8 +48,13 @@ class MainWindow(QMainWindow):
         file_menu.addAction(self._create_action("FDD Datei speichern", self.speichern_fdd))
         file_menu.addAction(self._create_action("Beenden", self.close, QKeySequence.Quit))
 
+        # Ansicht-Menü
+        ansicht_menu = menu_bar.addMenu("Ansicht")
+        ansicht_menu.addAction(self._create_action("Fullscreen", self.fullscreen, QKeySequence("F11")))
+        ansicht_menu.addAction(self._create_action("Hintergrund HELL/DUNKEL", self.toggle_background_color, QKeySequence("Ctrl+B")))
+        
         # Weitere Actions
-        menu_bar.addAction(self._create_action("Fullscreen", self.fullscreen, QKeySequence("F11")))
+        menu_bar.addAction(self._create_action("Screenshot speichern", self.screenshot))
         menu_bar.addAction(self._create_action("Vorderansicht", self.vorderansicht))
         menu_bar.addAction(self._create_action("Draufsicht", self.draufsicht))
         menu_bar.addAction(self._create_action("Seitenansicht", self.seitenansicht))
@@ -98,6 +106,46 @@ class MainWindow(QMainWindow):
         if filename:
             self.myModel.saveDatabase(Path(filename))
             self.statusBar().showMessage(f"Modell gespeichert: {filename}")
+
+    def toggle_background_color(self):
+        renderer = self.centralWidget().GetRenderer()
+
+        if self.is_background_light:
+             # Hintergrundfarbe auf Dunkelgrau setzen
+            renderer.SetBackground(0.1, 0.1, 0.1)  # Dunkelgrau (RGB: 10%)
+            self.statusBar().showMessage("Hintergrund geändert: Dunkelgrau")
+        else:
+            # Hintergrundfarbe auf Weiß setzen
+            renderer.SetBackground(1.0, 1.0, 1.0)  # Weiß (RGB: 100%)
+            self.statusBar().showMessage("Hintergrund geändert: Weiß")
+
+        # Umschalten des Status
+        self.is_background_light = not self.is_background_light
+
+        # Renderfenster aktualisieren
+        self.centralWidget().GetRenderWindow().Render()
+
+    def screenshot(self):
+        # Dialog für Dateispeicherung öffnen
+        filename, _ = QFileDialog.getSaveFileName(self, "Screenshot speichern", "", "PNG Files (*.png)")
+        if filename:
+            # Screenshot vom VTK-Renderfenster erstellen
+            render_window = self.centralWidget().GetRenderWindow()
+            window_to_image_filter = vtk.vtkWindowToImageFilter()
+            window_to_image_filter.SetInput(render_window)
+            window_to_image_filter.SetScale(1)  # Skalierung (1 = Originalgröße)
+            window_to_image_filter.SetInputBufferTypeToRGBA()
+            window_to_image_filter.ReadFrontBufferOff()
+            window_to_image_filter.Update()
+
+            # PNG-Schreiber für die Datei
+            writer = vtk.vtkPNGWriter()
+            writer.SetFileName(filename)
+            writer.SetInputConnection(window_to_image_filter.GetOutputPort())
+            writer.Write()
+
+            self.statusBar().showMessage(f"Screenshot gespeichert: {filename}")
+
 
     def fullscreen(self):
         #Vollbild
