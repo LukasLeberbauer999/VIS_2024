@@ -17,7 +17,7 @@ from vtkmodules.vtkRenderingCore import (
 from vtkmodules.all import vtkInteractorStyleTrackballCamera
 
 if len(sys.argv) < 2:
-    sys.exit("No fdd file provided! Please run script with additional argument: fdd-filepath!")
+    sys.exit("Kein FDD File gefunden")
 
 myModel = mbsModel.mbsModel()
 
@@ -36,8 +36,8 @@ myModel.saveDatabase(json_path)
 newModel = mbsModel.mbsModel()
 newModel.loadDatabase(json_path) 
 
-#visualization part
-#-----------------------------------------------------------------------------
+#Visualisierung
+
 renderer = vtkRenderer()
 renderer.SetBackground(1,1,1) #weißer Hintergrund
 renWin = vtkRenderWindow()
@@ -69,7 +69,6 @@ interactor.SetInteractorStyle(style)
 # Modell anzeigen
 newModel.showModel(renderer) #von json gelesenes Modell
 
-# Render- und Interaktionsloop starten
+
 renWin.Render()
 interactor.Start()
-#-----------------------------------------------------------------------------

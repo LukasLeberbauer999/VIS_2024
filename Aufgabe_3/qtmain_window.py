@@ -7,8 +7,6 @@ import qt_widget as mwid
 import vtk
 
 class MainWindow(QMainWindow):
-    #WINDOW_GEOMETRY = (300, 300, 2000, 2000)  # x, y, Breite, Höhe
-
     def __init__(self, widget):
         super().__init__()
 
