@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import QApplication
-import main_window as mwin
-import main_widget as mwid
+import qtmain_window as mwin
+import qt_widget as mwid
 
 # Initialisiere die Qt-Anwendung
 app = QApplication(sys.argv)
