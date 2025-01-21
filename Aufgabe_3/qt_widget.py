@@ -18,14 +18,13 @@ class Widget(QVTK.QVTKRenderWindowInteractor):
         self.renderer.AddActor2D(self.text_actor)
 
     def update_renderer(self, model):
-        """Aktualisiert den Renderer mit einem neuen Modell."""
+        #aktualisiert Renderer
         #self.renderer.RemoveAllViewProps()  # Entfernt alte Modelle
         model.showModel(self.renderer)  # Zeigt das neue Modell an
         self.renderer.ResetCamera()  # Kamera zurücksetzen
         self.GetRenderWindow().Render()  # Rendern des aktualisierten Fensters
 
     def update_text_actor(self, text):
-        """Aktualisiert den Text des Text-Actors."""
         self.text_actor.SetInput(text)  # Text setzen
         self.GetRenderWindow().Render()  # Neu rendern
 

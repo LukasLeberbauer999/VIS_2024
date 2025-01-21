@@ -7,7 +7,7 @@ import qt_widget as mwid
 import vtk
 
 class MainWindow(QMainWindow):
-    WINDOW_GEOMETRY = (300, 300, 1200, 800)  # x, y, Breite, Höhe
+    #WINDOW_GEOMETRY = (300, 300, 2000, 2000)  # x, y, Breite, Höhe
 
     def __init__(self, widget):
         super().__init__()
@@ -28,7 +28,7 @@ class MainWindow(QMainWindow):
         self.current_interactor_style = "default"
         # Text-Actor initialisieren 
         self.is_text_visible = False
-        self.centralWidget().update_text_actor("")  # Kein Text beim Start
+        self.centralWidget().update_text_actor("")
 
         # Strukturbaum-Dock-Widget hinzufügen
         self.strukturbaum = self._erstelle_strukturbaum()
@@ -41,14 +41,14 @@ class MainWindow(QMainWindow):
 
         # Datei-Menü
         file_menu = menu_bar.addMenu("Datei") #Erstellt ein Dropdown
-        file_menu.addAction(self._create_action("JSON Datei laden", self.load_json))   # Fügt zum Dropdown hinzu
-        file_menu.addAction(self._create_action("FDD Datei laden", self.load_fdd))
-        file_menu.addAction(self._create_action("JSON Datei speichern", self.save_json))
+        file_menu.addAction(self._create_action("JSON Datei laden", self.lade_json))   # Fügt zum Dropdown hinzu
+        file_menu.addAction(self._create_action("FDD Datei laden", self.lade_fdd))
+        file_menu.addAction(self._create_action("JSON Datei speichern", self.speichern_json))
+        file_menu.addAction(self._create_action("FDD Datei speichern", self.speichern_fdd))
         file_menu.addAction(self._create_action("Beenden", self.close, QKeySequence.Quit))
 
-        # View-Menü
-        view_menu = menu_bar.addMenu("Ansicht")
-        view_menu.addAction(self._create_action("Fullscreen", self.fullscreen, QKeySequence("F11")))
+        # Weitere Actions
+        menu_bar.addAction(self._create_action("Fullscreen", self.fullscreen, QKeySequence("F11")))
         menu_bar.addAction(self._create_action("Vorderansicht", self.vorderansicht))
         menu_bar.addAction(self._create_action("Draufsicht", self.draufsicht))
         menu_bar.addAction(self._create_action("Seitenansicht", self.seitenansicht))
@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
         action.triggered.connect(method)
         return action
 
-    def load_json(self):
+    def lade_json(self):
         #Lädt JSON Datei
         filename, _ = QFileDialog.getOpenFileName(self, "JSON Datei laden", "", "JSON Files (*.json)")
         if filename:
@@ -71,18 +71,18 @@ class MainWindow(QMainWindow):
                 self.statusBar().showMessage(f"Modell aus JSON geladen: {filename}")
                 self.centralWidget().update_renderer(self.myModel)
                 # Aktualisiere den Strukturbaum mit dem tatsächlichen Dateinamen
-                self.update_structure_tree(file_name=Path(filename).name)
+                self.update_strukturbaum(file_name=Path(filename).name)
             else:
                 self._show_message("Bitte JSON Datei wählen")
 
-    def save_json(self):
+    def speichern_json(self):
         # Speichert das Modell als JSON
         filename, _ = QFileDialog.getSaveFileName(self, "JSON Datei speichern", "", "JSON Files (*.json)")
         if filename:
             self.myModel.saveDatabase(Path(filename))
             self.statusBar().showMessage(f"Modell gespeichert: {filename}")
 
-    def load_fdd(self):
+    def lade_fdd(self):
         #Lädt FDD Datei
         filename, _ = QFileDialog.getOpenFileName(self, "FDD Datei laden", "", "FDD Files (*.fdd)")
         if filename.lower().endswith(".fdd"):
@@ -90,15 +90,22 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage(f"FDD-Datei importiert: {filename}")
             self.centralWidget().update_renderer(self.myModel)
             # Aktualisiere den Strukturbaum mit dem tatsächlichen Dateinamen
-            self.update_structure_tree(file_name=Path(filename).name)
+            self.update_strukturbaum(file_name=Path(filename).name)
         else:
             self._show_message("Bitte FDD Datei wählen")
+
+    def speichern_fdd(self):
+        # Speichert das Modell als JSON
+        filename, _ = QFileDialog.getSaveFileName(self, "FDD Datei speichern", "", "FDD Files (*.fdd)")
+        if filename:
+            self.myModel.saveDatabase(Path(filename))
+            self.statusBar().showMessage(f"Modell gespeichert: {filename}")
 
     def fullscreen(self):
         #Vollbild
         if self.isFullScreen():
             self.showNormal()
-            self.setGeometry(*self.WINDOW_GEOMETRY)
+            self.setGeometry()
         else:
             self.showFullScreen()
 
@@ -115,7 +122,7 @@ class MainWindow(QMainWindow):
         self.statusBar().showMessage("Draufsicht")
 
     def isoansicht(self): #Zeigt die ISO Ansicht
-        self._set_camera_orientation(1, 1, 1, 0, -1, 0)
+        self._set_camera_orientation(1, 1, 1, -1, 0, 0)
         self.statusBar().showMessage("ISO-Ansicht")
 
     def _set_camera_orientation(self, pos_x, pos_y, pos_z, up_x, up_y, up_z):
@@ -129,7 +136,7 @@ class MainWindow(QMainWindow):
         self.centralWidget().GetRenderWindow().Render()
 
     def _erstelle_strukturbaum(self):
-        #erstellt Strukturbaum
+        #erstellt Dock widget für Strukturbaum (also die Positionierung)
         dock_widget = QDockWidget("Strukturbaum", self)
         dock_widget.setFeatures(QDockWidget.NoDockWidgetFeatures) #fixiert an linke Seite
         

@@ -34,7 +34,7 @@ myModel.saveDatabase(json_path)
 #create new model and load json generated above
 #(content should be the same)
 newModel = mbsModel.mbsModel()
-newModel.loadDatabase(json_path) #Proof, dass das json-file gelesen werden kann
+newModel.loadDatabase(json_path) 
 
 #visualization part
 #-----------------------------------------------------------------------------
@@ -45,16 +45,14 @@ renWin.AddRenderer(renderer)
 
 def windowtype(type):
         hint = vtkTextActor()
-        hint.SetInput("MKS Reader LUKI: Press 'q' to exit.")
-        hint.GetTextProperty().SetFontSize(24)
+        hint.GetTextProperty().SetFontSize(25)
         hint.GetTextProperty().SetColor(0, 0, 0)  #Schwarzer Text
         hint.SetPosition(10, 10)  #Position unten links
         renderer.AddActor2D(hint)
         
         #kleines Fenster
         if type == 1:
-            renWin.SetSize(1024,768)
-            renWin.SetWindowName("MKS Reader LUKI")
+            renWin.SetSize(2000,1600)
         #Fullscreen
         if type == 2:
             renWin.SetFullScreen(True)
