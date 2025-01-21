@@ -20,6 +20,7 @@ class genericConstraint(constraint):
     def __init__(self,**kwargs):
         if "text" in kwargs:
             parameter = {
+                "name": {"type": "string", "value": ""},
                 "body1": {"type": "string", "value": "no"},
                 "body2": {"type": "string", "value": "no"},
                 "position": {"type": "vector", "value": [0.,0.,0.]},

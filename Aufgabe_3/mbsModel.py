@@ -11,6 +11,19 @@ import os
 class mbsModel:
     def __init__(self):
         self.__mbsObjectList = []
+
+    def get_mbsObjectList(self):
+        return self.__mbsObjectList
+
+    def get_object_type_and_name(self, obj):
+        """Gibt den Typ und den Namen des Objekts zurück."""
+        if obj in self.__mbsObjectList:
+            # Hier gehe ich davon aus, dass das Objekt ein Dictionary mit den Parametern hat.
+            name = obj.parameter["name"]["value"] if "name" in obj.parameter else "Unbekannter Name"
+            obj_type = obj.getType()  # Angenommen, die Methode getType() existiert im Objekt
+            return obj_type, name
+        else:
+            raise ValueError("Das Objekt befindet sich nicht in der mbsObjectList")
     
     def importFddFile(self,filepath):
         file_name, file_extension = os.path.splitext(filepath)

@@ -24,6 +24,7 @@ class genericForce(force):
     def __init__(self,**kwargs):
         if "text" in kwargs:
             parameter = {
+                "name": {"type": "string", "value": ""},
                 "body1": {"type": "string", "value": "no"},
                 "body2": {"type": "string", "value": "no"},
                 "PointOfApplication_Body1": {"type": "vector", "value": [0.,0.,0.]},

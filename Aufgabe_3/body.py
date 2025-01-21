@@ -16,6 +16,7 @@ class rigidBody(body):
     def __init__(self,**kwargs):
         if "text" in kwargs:
             parameter = {
+                "name": {"type": "string", "value": ""},
                 "mass": {"type": "float", "value": 1.},
                 "COG": {"type": "vector", "value": [0.,0.,0.]},
                 "geometry": {"type": "filepath", "value": ""},
