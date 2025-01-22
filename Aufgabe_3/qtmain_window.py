@@ -28,10 +28,6 @@ class MainWindow(QMainWindow):
         self.is_text_visible = False
         self.centralWidget().update_text_actor("")
 
-        # Strukturbaum-Dock-Widget hinzufügen
-        self.strukturbaum = self._erstelle_strukturbaum()
-        self.addDockWidget(Qt.LeftDockWidgetArea, self.strukturbaum)
-
         # Hintergrundfarbe-Status (True = Weiß, False = Dunkelgrau)
         self.is_background_light = True
     
@@ -180,74 +176,6 @@ class MainWindow(QMainWindow):
         camera.SetViewUp(up_x, up_y, up_z)
         renderer.ResetCamera()
         self.centralWidget().GetRenderWindow().Render()
-
-    def _erstelle_strukturbaum(self):
-        #erstellt Dock widget für Strukturbaum (also die Positionierung)
-        dock_widget = QDockWidget("Strukturbaum", self)
-        dock_widget.setFeatures(QDockWidget.NoDockWidgetFeatures) #fixiert an linke Seite
-        
-        # Erstelle ein Widget für den Strukturbaum
-        tree_widget = QWidget()
-        layout = QVBoxLayout(tree_widget)
-
-        # Erstelle den Baum-Modell
-        self.tree_model = QStandardItemModel()
-        self.tree_view = QTreeView()
-        self.tree_view.setModel(self.tree_model)
-        layout.addWidget(self.tree_view)
-
-        # updaten der Baum Struktur
-        self.update_strukturbaum()
-
-        # Setze das Widget im Dock-Widget
-        dock_widget.setWidget(tree_widget)
-
-        return dock_widget
-    
-    def update_strukturbaum(self, file_name="File Name"):
-        #Aktualisiert den Strukturbaum
-
-        # Clear the model completely
-        self.tree_model.clear()
-
-        # Explicitly set the root item
-        root_item = QStandardItem(file_name)
-        root_item.setEditable(False)  # Schreibschutz
-        self.tree_model.appendRow(root_item)
-
-        # Add child categories to the root item
-        rigid_bodies_item = QStandardItem("Rigid Bodies")
-        rigid_bodies_item.setEditable(False)
-        constraints_item = QStandardItem("Constraints")
-        constraints_item.setEditable(False)
-        forces_item = QStandardItem("Forces")
-        forces_item.setEditable(False)
-        measures_item = QStandardItem("Measures")
-        measures_item.setEditable(False)
-
-        # Befüllen der Kategorien
-        for obj in self.myModel.get_mbsObjectList():
-            obj_type, name = self.myModel.get_object_type_and_name(obj)
-            item = QStandardItem(name)
-
-            if obj_type == "Body":
-                rigid_bodies_item.appendRow(item)
-                rigid_bodies_item.setEditable(False) 
-            elif obj_type == "Constraint":
-                constraints_item.appendRow(item)
-                constraints_item.setEditable(False)
-            elif obj_type == "Force":
-                forces_item.appendRow(item)
-                forces_item.setEditable(False)
-            elif obj_type == "Measure":
-                measures_item.appendRow(item)
-                measures_item.setEditable(False)
-
-        # Fügt die Kategorien der Struktur hinzu
-        root_item.appendRow(rigid_bodies_item)
-        root_item.appendRow(constraints_item)
-        root_item.appendRow(forces_item)
-        root_item.appendRow(measures_item)
 
     def _show_message(self, title, text):
         QMessageBox.critical(self, title, text)
