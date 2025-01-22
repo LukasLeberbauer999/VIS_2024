@@ -72,8 +72,7 @@ class MainWindow(QMainWindow):
                 self.myModel.loadDatabase(Path(filename))
                 self.statusBar().showMessage(f"Modell aus JSON geladen: {filename}")
                 self.centralWidget().update_renderer(self.myModel)
-                # Aktualisiere den Strukturbaum mit dem tatsächlichen Dateinamen
-                self.update_strukturbaum(file_name=Path(filename).name)
+                
             else:
                 self._show_message("Bitte JSON Datei wählen")
 
@@ -91,8 +90,7 @@ class MainWindow(QMainWindow):
             self.myModel.importFddFile(filename)
             self.statusBar().showMessage(f"FDD-Datei importiert: {filename}")
             self.centralWidget().update_renderer(self.myModel)
-            # Aktualisiere den Strukturbaum mit dem tatsächlichen Dateinamen
-            self.update_strukturbaum(file_name=Path(filename).name)
+            
         else:
             self._show_message("Bitte FDD Datei wählen")
 
@@ -115,7 +113,7 @@ class MainWindow(QMainWindow):
             renderer.SetBackground(1.0, 1.0, 1.0)  # Weiß (RGB: 100%)
             self.statusBar().showMessage("Hintergrund geändert: Weiß")
 
-        # Umschalten des Status
+        # Umschalten der Hintergrundfarbe
         self.is_background_light = not self.is_background_light
 
         # Renderfenster aktualisieren
